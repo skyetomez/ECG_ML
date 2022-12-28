@@ -1,0 +1,4 @@
+train_mit = mitbih/mitbih_test.csv
+test_mit = mitbih/mitbih_test.csv
+abnormal_pb = ptbdb/ptbdb_abnormal.csv
+normal_pb = ptbdb/ptbdb_normal.csv
