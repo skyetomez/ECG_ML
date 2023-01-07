@@ -49,7 +49,7 @@ def prep_dirs(
         raise ValueError
 
 
-def data_aug(data: pd.DataFrame) -> pd.DataFrame:
+def data_aug(data: pd.DataFrame) -> np.ndarray:
     data_arr = data.copy()
     data_arr = data_arr.to_numpy()
     row_dim, col_dim = data_arr.shape
