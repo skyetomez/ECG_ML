@@ -35,13 +35,23 @@ def prep_dirs(
         print("All dirs ready")
         os.chdir(HOME)
 
-        tmit = pd.read_csv(train_mit_path, encoding="ascii")
+        names = list(map(str, list(range(1, 189))))
+
+        tmit = pd.read_csv(
+            train_mit_path, encoding="ascii", names=names, engine="pyarrow"
+        )
         print(train_mit_path)
-        tsmit = pd.read_csv(test_mit_path, encoding="ascii")
+        tsmit = pd.read_csv(
+            test_mit_path, encoding="ascii", names=names, engine="pyarrow"
+        )
         print(test_mit_path)
-        apb = pd.read_csv(abnormal_pb_path, encoding="ascii")
+        apb = pd.read_csv(
+            abnormal_pb_path, encoding="ascii", names=names, engine="pyarrow"
+        )
         print(abnormal_pb_path)
-        npb = pd.read_csv(normal_pb_path, encoding="ascii")
+        npb = pd.read_csv(
+            normal_pb_path, encoding="ascii", names=names, engine="pyarrow"
+        )
         print(normal_pb_path)
         ans = (tmit, tsmit, apb, npb)
         return ans
