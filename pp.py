@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas import DataFrame
+import numpy as np
 import os
 
 
@@ -48,6 +49,54 @@ def prep_dirs(
         raise ValueError
 
 
+def data_aug(data: pd.DataFrame) -> pd.DataFrame:
+    data_arr = data.copy()
+    data_arr = data_arr.to_numpy()
+    row_dim, col_dim = data_arr.shape
+
+    aug1 = data_arr.copy()
+    shape = data_arr.shape
+
+    # add noise
+    noise = np.random.randn(row_dim, col_dim)
+    aug1 += noise
+
+    # dilate signal
+
+    aug2 = np.zeros(shape=shape)
+    aug3 = np.zeros(shape=shape)
+
+    augs = list()
+
+    factors = [2, 0.5]
+
+    tmp = np.zeros(shape=shape)
+
+    for scalar in factors:
+
+        scaled_indices = np.arange(col_dim, dtype=int) * scalar
+        scaled_indices = np.where(scaled_indices < col_dim, scaled_indices, -1)
+
+        if scalar % 1 != 0:
+            scaled_indices = np.floor(scaled_indices).astype(int)
+
+        remainder = col_dim - len(scaled_indices)
+        scaled_indices = np.pad(
+            scaled_indices, (0, remainder), "constant", constant_values=-1
+        )
+
+        for row in range(row_dim):
+            tmp[row, :] = np.where(
+                scaled_indices != -1, data_arr[row, scaled_indices], 0
+            )
+
+        augs.append(tmp)
+
+    aug2, aug3 = augs
+
+    return np.vstack((data_arr, aug1, aug2, aug3))
+
+
 if __name__ == "__main__":
     # HOME = os.environ["WORK"]
     # hp = os.environ["HYPERPARAMS"]
@@ -57,9 +106,23 @@ if __name__ == "__main__":
         HOME, "/home/gear/Github/ECG_ML/hp.txt"
     )
 
-    # train_mit = pd.read_csv(train_mit_path)
-    # test_mit = pd.read_csv(test_mit_path)
-    # abnormal_pb = pd.read_csv(abnormal_pb_path)
-    # normal_pb = pd.read_csv(normal_pb_path)
+    tmp = data_aug(train_mit_path)
 
-    # mit_data = pd.concat([train_mit, test_mit], axis=0)
+    # factors = 0.5
+
+    # row_dim, col_dim = train_mit_path.shape
+    # data_arr = train_mit_path.to_numpy()
+    # shape = train_mit_path.shape
+
+    # tmp = np.zeros(shape=shape)
+
+    # scaled_indices = np.arange(col_dim, dtype=int) * factors
+    # scaled_indices = np.where(scaled_indices < col_dim, scaled_indices, -1)
+    # scaled_indices = np.floor(scaled_indices).astype(int)
+    # remainder = col_dim - len(scaled_indices)
+    # scaled_indices = np.pad(
+    #     scaled_indices, (0, remainder), "constant", constant_values=-1
+    # )
+
+    # for row in range(row_dim):
+    #     tmp[row, :] = np.where(scaled_indices != -1, data_arr[row, scaled_indices], 0)
