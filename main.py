@@ -1,5 +1,5 @@
 from nn import residual_layer
-from pp import prep_dirs
+from pp import prep_dirs, data_aug
 
 
 import pandas as pd
@@ -36,9 +36,13 @@ if __name__ == "__main__":
     train_mit, test_mit, tmp1, tmp2 = prep_dirs(HOME, HP)
 
     mit_data = pd.concat([train_mit, test_mit], axis=0)
+    mit_data = pd.DataFrame(data_aug(mit_data))
 
+    # ----------- create x and y --------------
     X = mit_data.iloc[:, :-1]
     y = mit_data.iloc[:, -1]
+
+    # ------------y one hot matrix of 1 ------------
     y = to_categorical(y, num_classes=5)
 
     x_train, x_test, y_train, y_test = train_test_split(
@@ -47,9 +51,6 @@ if __name__ == "__main__":
 
     x_train = np.expand_dims(x_train, axis=2)
     x_test = np.expand_dims(x_test, axis=2)
-
-    # y_train = to_categorical(y_train, num_classes=5)
-    # y_test = to_categorical(y_test, num_classes=5)
 
     x_train = x_train.astype("float32")
     x_test = x_test.astype("float32")
@@ -104,7 +105,7 @@ if __name__ == "__main__":
         y=y_train,
         epochs=num_epochs,
         batch_size=n_obs,
-        verbose=2,
+        verbose="2",
         validation_data=(x_test, y_test),
         callbacks=[lr],
     )

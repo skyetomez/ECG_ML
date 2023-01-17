@@ -64,11 +64,15 @@ def data_aug(data: pd.DataFrame) -> np.ndarray:
     data_arr = data_arr.to_numpy()
     row_dim, col_dim = data_arr.shape
 
+    last_index = col_dim - 1
+    last_column_copy = data_arr[:, last_index]
+
     aug1 = data_arr.copy()
     shape = data_arr.shape
 
     # add noise
     noise = np.random.randn(row_dim, col_dim)
+    noise[:, last_index] = noise[:, last_index] * 0
     aug1 += noise
 
     # dilate signal
@@ -100,6 +104,7 @@ def data_aug(data: pd.DataFrame) -> np.ndarray:
                 scaled_indices != -1, data_arr[row, scaled_indices], 0
             )
 
+        tmp[:, last_index] = last_column_copy
         augs.append(tmp)
 
     aug2, aug3 = augs
@@ -117,6 +122,7 @@ if __name__ == "__main__":
     )
 
     tmp = data_aug(train_mit_path)
+    tmp = pd.DataFrame(tmp)
 
     # factors = 0.5
 
