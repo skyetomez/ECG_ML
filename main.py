@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     # ---------- train model -------------
 
-    num_epochs = 75
+    num_epochs = 40
 
     history = model.fit(
         x=x_train,
@@ -128,6 +128,9 @@ if __name__ == "__main__":
     val_loss = history.history["val_loss"]
 
     epochs = range(1, len(accuracy) + 1)  # include last
+
+    plt.figure(figsize=[7, 5], dpi=200)
+    plt.style.use("ggplot")
 
     fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True)
 
